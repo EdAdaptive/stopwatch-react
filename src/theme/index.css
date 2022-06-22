@@ -13,9 +13,19 @@
   src: url("../assets/fonts/SFProText-Light.ttf") format("opentype");
 }
 
-body {
+* {
   margin: 0;
+  padding: 0;
+  font-weight: lighter;
+}
+
+body {
   font-family: "SF Pro", "Roboto", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-weight: lighter;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  max-height: 900px;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
 }
