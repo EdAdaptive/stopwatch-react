@@ -1,85 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatTime } from "./utils/formatTime";
 import "./theme/App.css";
 
+import LeftButton from "./components/LeftButton/LeftButton";
+import RightButton from "./components/RightButton/RightButton";
+
 function App() {
-  const [timer, setTimer] = useState("00:00.00");
-  const [startTime, setStartTime] = useState();
-  const [pausedTime, setPausedTime] = useState();
-  const [lapState, setLapState] = useState({
-    totalLaps: 0,
-    startTime: 0,
-    pausedTime: 0,
-    bestLap: {
-      time: 0,
-      key: 0,
-    },
-    worstLap: {
-      time: 0,
-      key: 0,
-    },
-  });
-  const [stopwatchAnimation, setStopwatchAnimation] = useState();
+  const [startTime, setStartTime] = useState(0);
   const [isTiming, setIsTiming] = useState(false);
+  const [pausedTime, setPausedTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [timeInterval, setTimeInterval] = useState();
 
-  const startStopwatchAnimation = () => {
-    // stopwatchAnimation = runStopwatch();
-  };
-
-  function startStopwatch() {
-    if (startTime === 0) {
-      setStartTime(Date.now());
-    } else {
-      setPausedTime(Date.now() - pausedTime);
-    }
-
-    setIsTiming(true);
-    if (lapState.totalLaps === 0) {
-      // lapStopwatch();
-    }
-
-    setStopwatchAnimation(startStopwatchAnimation);
+  function runStopwatch() {
+    setCurrentTime(Date.now());
   }
 
-  function stopStopwatch() {
-    cancelAnimationFrame(stopwatchAnimation);
-    setIsTiming(false);
+  function updateInterval(state) {
+    if (state) {
+      setTimeInterval(setInterval(() => runStopwatch(), 1000 / 60));
+    } else {
+      clearInterval(timeInterval);
+    }
   }
 
   return (
     <div className="stopwatch-container">
       <header className="stopwatch-header">
-        <h2>{timer}</h2>
+        <h2>
+          {startTime === 0
+            ? "00:00:00"
+            : formatTime(currentTime, startTime, pausedTime)}
+        </h2>
       </header>
       <div>
         <section className="controls">
-          {isTiming === true ? (
-            <button id="reset-lap" onClick={() => lapStopwatch()}>
-              Lap
-            </button>
-          ) : (
-            <button id="reset-lap" onClick={() => resetStopwatch()}>
-              Reset
-            </button>
-          )}
-
-          {isTiming === true ? (
-            <button
-              id="stop-start"
-              className="stop"
-              onClick={() => stopStopwatch()}
-            >
-              Stop
-            </button>
-          ) : (
-            <button
-              id="stop-start"
-              className="start"
-              onClick={() => startStopwatch()}
-            >
-              Start
-            </button>
-          )}
+          <LeftButton
+            isTiming={isTiming}
+            startTime={startTime}
+            setStartTime={setStartTime}
+            setCurrentTime={setCurrentTime}
+            setPausedTime={setPausedTime}
+          />
+          <RightButton
+            isTiming={isTiming}
+            startTime={startTime}
+            pausedTime={pausedTime}
+            setIsTiming={setIsTiming}
+            setStartTime={setStartTime}
+            setPausedTime={setPausedTime}
+            updateInterval={updateInterval}
+          />
         </section>
         <section className="laps-container" aria-label="Lap history"></section>
       </div>
