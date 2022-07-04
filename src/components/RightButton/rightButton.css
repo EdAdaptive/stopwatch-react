@@ -1,0 +1,21 @@
+.start {
+  color: var(--system-green);
+  background-color: rgba(52, 199, 89, 0.4);
+  outline: rgba(52, 199, 89, 0.4) solid 0.25rem;
+}
+
+.start:active {
+  background-color: rgba(52, 199, 89, 0.15);
+  outline: rgba(52, 199, 89, 0.15) solid 0.25rem;
+}
+
+.stop {
+  color: var(--system-red);
+  background-color: rgba(255, 59, 48, 0.4);
+  outline: rgb(255, 59, 48, 0.4) solid 0.25rem;
+}
+
+.stop:active {
+  background-color: rgba(255, 59, 48, 0.15);
+  outline: rgb(255, 59, 48, 0.15) solid 0.25rem;
+}
