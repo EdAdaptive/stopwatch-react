@@ -28,7 +28,7 @@ function App() {
     <div className="stopwatch-container">
       <header className="stopwatch-header">
         <h2>
-          {startTime === 0
+          {currentTime === 0
             ? "00:00:00"
             : formatTime(currentTime, startTime, pausedTime)}
         </h2>
@@ -46,6 +46,7 @@ function App() {
             isTiming={isTiming}
             startTime={startTime}
             pausedTime={pausedTime}
+            currentTime={currentTime}
             setIsTiming={setIsTiming}
             setStartTime={setStartTime}
             setPausedTime={setPausedTime}

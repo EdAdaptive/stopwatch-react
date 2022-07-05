@@ -4,10 +4,12 @@ import "./rightButton.css";
 export default function RightButton(props) {
   function startStopwatch() {
     props.setIsTiming(true);
-    props.updateInterval(true);
     if (props.startTime === 0) {
       props.setStartTime(Date.now());
+    } else {
+      props.setPausedTime(props.pausedTime + Date.now() - props.currentTime);
     }
+    props.updateInterval(true);
   }
 
   function stopStopwatch() {
