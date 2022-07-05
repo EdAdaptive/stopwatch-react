@@ -4,12 +4,14 @@ import "./theme/App.css";
 
 import LeftButton from "./components/LeftButton/LeftButton";
 import RightButton from "./components/RightButton/RightButton";
+import LapContainer from "./components/LapContainer/LapContainer";
 
 function App() {
   const [startTime, setStartTime] = useState(0);
   const [isTiming, setIsTiming] = useState(false);
   const [pausedTime, setPausedTime] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [lapHistory, setLapHistory] = useState([]);
   const [timeInterval, setTimeInterval] = useState();
 
   function runStopwatch() {
@@ -38,9 +40,11 @@ function App() {
           <LeftButton
             isTiming={isTiming}
             startTime={startTime}
+            lapHistory={lapHistory}
             setStartTime={setStartTime}
             setCurrentTime={setCurrentTime}
             setPausedTime={setPausedTime}
+            setLapHistory={setLapHistory}
           />
           <RightButton
             isTiming={isTiming}
@@ -53,7 +57,11 @@ function App() {
             updateInterval={updateInterval}
           />
         </section>
-        <section className="laps-container" aria-label="Lap history"></section>
+        <LapContainer
+          startTime={startTime}
+          lapHistory={lapHistory}
+          currentTime={currentTime}
+        />
       </div>
     </div>
   );

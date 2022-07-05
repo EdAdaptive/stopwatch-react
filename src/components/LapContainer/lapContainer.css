@@ -1,0 +1,52 @@
+.laps-container {
+  overflow-y: scroll;
+  height: 13rem;
+  background-image: linear-gradient(
+    0,
+    #000000 48.65%,
+    rgba(255, 255, 255, 0.2) 48.65%,
+    rgba(255, 255, 255, 0.2) 50%,
+    #000000 50%,
+    #000000 98.65%,
+    rgba(255, 255, 255, 0.2) 98.65%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  background-size: 74px 74px;
+  scrollbar-width: 0.4rem;
+  scrollbar-color: var(--system-gray) #000;
+}
+
+/* Scrollbar for Chrome, Edge, and Safari */
+.laps-container::-webkit-scrollbar {
+  width: 0.4rem;
+}
+
+.laps-container::-webkit-scrollbar-track {
+  background-color: #000;
+}
+
+.laps-container::-webkit-scrollbar-thumb {
+  background-color: var(--system-gray);
+  border-radius: 10px;
+}
+
+.laps-container > div {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #000;
+}
+
+.laps-container > div > span {
+  display: block;
+  text-align: left;
+  padding: 0.5rem 0;
+}
+
+.highest-lap {
+  color: var(--system-green);
+}
+
+.worst-lap {
+  color: var(--system-red);
+}
