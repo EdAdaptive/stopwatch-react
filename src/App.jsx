@@ -11,11 +11,35 @@ function App() {
   const [isTiming, setIsTiming] = useState(false);
   const [pausedTime, setPausedTime] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [lapHistory, setLapHistory] = useState([]);
+  const [lapHistory, setLapHistory] = useState([
+    {
+      totalTime: 0,
+      startTime: 0,
+      pausedTime: 0,
+    },
+  ]);
   const [timeInterval, setTimeInterval] = useState();
+  const [lapStartTime, setLapStartTime] = useState(0);
+  const [lapPausedTime, setLapPausedTime] = useState(0);
+
+  useEffect(() => {
+    if (lapStartTime === 0 && isTiming) {
+      setLapStartTime(Date.now());
+    } else if (lapStartTime !== 0 && isTiming) {
+      setLapPausedTime(lapPausedTime + Date.now() - lapStartTime);
+    }
+  }, [isTiming]);
+
+  useEffect(() => {
+    lapHistory[lapHistory.length - 1].pausedTime = lapPausedTime;
+  }, [lapPausedTime]);
 
   function runStopwatch() {
     setCurrentTime(Date.now());
+    setLapHistory((prevState) => {
+      console.log(prevState[prevState.length - 1]);
+      return [{ ...prevState[prevState.length - 1], totalTime: Date.now() }];
+    });
   }
 
   function updateInterval(state) {
@@ -45,6 +69,8 @@ function App() {
             setCurrentTime={setCurrentTime}
             setPausedTime={setPausedTime}
             setLapHistory={setLapHistory}
+            setLapStartTime={setLapStartTime}
+            setLapPausedTime={setLapPausedTime}
           />
           <RightButton
             isTiming={isTiming}
@@ -59,7 +85,7 @@ function App() {
         </section>
         <LapContainer
           startTime={startTime}
-          lapHistory={lapHistory}
+          lapHistory={[...lapHistory, finalLap]}
           currentTime={currentTime}
         />
       </div>

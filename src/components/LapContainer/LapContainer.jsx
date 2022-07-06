@@ -13,15 +13,29 @@ export default function LapContainer(props) {
 
   return (
     <section className="laps-container" aria-label="Lap history">
+      {/* {props.lapHistory[0].startTime === 0
+        ? null
+        : props.lapHistory
+            .map((lap, index) => (
+              <div key={index + 1}>
+                <span>Lap {index + 1}</span>
+                <span>
+                  {formatTime(lap.totalTime, lap.startTime, lap.pausedTime)}
+                </span>
+              </div>
+            ))
+            .reverse()} */}
       {props.lapHistory
-        .map((lap, index) => (
-          <div key={index + 1}>
-            <span>Lap {index + 1}</span>
-            <span>
-              {formatTime(lap.totalTime, lap.startTime, lap.pausedTime)}
-            </span>
-          </div>
-        ))
+        ?.map((lap, index) => {
+          return (
+            <div key={index + 1}>
+              <span>Lap {index + 1}</span>
+              <span>
+                {formatTime(lap.totalTime, lap.startTime, lap.pausedTime)}
+              </span>
+            </div>
+          );
+        })
         .reverse()}
     </section>
   );
