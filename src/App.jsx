@@ -9,36 +9,26 @@ import LapContainer from "./components/LapContainer/LapContainer";
 function App() {
   const [startTime, setStartTime] = useState(0);
   const [isTiming, setIsTiming] = useState(false);
-  const [pausedTime, setPausedTime] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [lapHistory, setLapHistory] = useState([
-    {
-      totalTime: 0,
-      startTime: 0,
-      pausedTime: 0,
-    },
-  ]);
+  const [lapHistory, setLapHistory] = useState([]);
+  const [finalLap, setFinalLap] = useState({
+    totalTime: 0,
+    startTime: 0,
+  });
   const [timeInterval, setTimeInterval] = useState();
-  const [lapStartTime, setLapStartTime] = useState(0);
-  const [lapPausedTime, setLapPausedTime] = useState(0);
 
   useEffect(() => {
-    if (lapStartTime === 0 && isTiming) {
-      setLapStartTime(Date.now());
-    } else if (lapStartTime !== 0 && isTiming) {
-      setLapPausedTime(lapPausedTime + Date.now() - lapStartTime);
+    if (finalLap.startTime === 0 && isTiming) {
+      setFinalLap((prevState) => {
+        return { ...prevState, startTime: Date.now() };
+      });
     }
   }, [isTiming]);
 
-  useEffect(() => {
-    lapHistory[lapHistory.length - 1].pausedTime = lapPausedTime;
-  }, [lapPausedTime]);
-
   function runStopwatch() {
     setCurrentTime(Date.now());
-    setLapHistory((prevState) => {
-      console.log(prevState[prevState.length - 1]);
-      return [{ ...prevState[prevState.length - 1], totalTime: Date.now() }];
+    setFinalLap((prevState) => {
+      return { ...prevState, totalTime: Date.now() };
     });
   }
 
@@ -56,7 +46,7 @@ function App() {
         <h2>
           {currentTime === 0
             ? "00:00:00"
-            : formatTime(currentTime, startTime, pausedTime)}
+            : formatTime(currentTime, startTime, 0)}
         </h2>
       </header>
       <div>
@@ -65,22 +55,20 @@ function App() {
             isTiming={isTiming}
             startTime={startTime}
             lapHistory={lapHistory}
+            finalLap={finalLap}
             setStartTime={setStartTime}
             setCurrentTime={setCurrentTime}
-            setPausedTime={setPausedTime}
             setLapHistory={setLapHistory}
-            setLapStartTime={setLapStartTime}
-            setLapPausedTime={setLapPausedTime}
+            setFinalLap={setFinalLap}
           />
           <RightButton
             isTiming={isTiming}
             startTime={startTime}
-            pausedTime={pausedTime}
             currentTime={currentTime}
             setIsTiming={setIsTiming}
             setStartTime={setStartTime}
-            setPausedTime={setPausedTime}
             updateInterval={updateInterval}
+            setFinalLap={setFinalLap}
           />
         </section>
         <LapContainer
