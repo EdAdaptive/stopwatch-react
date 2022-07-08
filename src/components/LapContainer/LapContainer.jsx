@@ -17,7 +17,7 @@ export default function LapContainer(props) {
                   ]}
                 >
                   <span>Lap {index + 1}</span>
-                  <span>{formatTime(lap.totalTime, lap.startTime, 0)}</span>
+                  <span>{formatTime(lap.totalTime, lap.startTime)}</span>
                 </div>
               );
             })

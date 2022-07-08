@@ -104,9 +104,7 @@ function App() {
     <div className="stopwatch-container">
       <header className="stopwatch-header">
         <h2>
-          {currentTime === 0
-            ? "00:00:00"
-            : formatTime(currentTime, startTime, 0)}
+          {currentTime === 0 ? "00:00:00" : formatTime(currentTime, startTime)}
         </h2>
       </header>
       <div>
