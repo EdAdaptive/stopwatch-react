@@ -7,7 +7,15 @@ export default function RightButton(props) {
     if (props.startTime === 0) {
       props.setStartTime(Date.now());
     } else {
-      props.setPausedTime(props.pausedTime + Date.now() - props.currentTime);
+      props.setStartTime((oldState) => {
+        return oldState + (Date.now() - props.currentTime);
+      });
+      props.setFinalLap((oldState) => {
+        return {
+          ...oldState,
+          startTime: oldState.startTime + (Date.now() - oldState.totalTime),
+        };
+      });
     }
     props.updateInterval(true);
   }
