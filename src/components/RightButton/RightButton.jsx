@@ -3,34 +3,21 @@ import "./rightButton.css";
 
 export default function RightButton(props) {
   function startStopwatch() {
-    props.setIsTiming(true);
-    if (props.startTime === 0) {
-      props.setStartTime(Date.now());
-    } else {
-      props.setStartTime((oldState) => {
-        return oldState + (Date.now() - props.currentTime);
-      });
-      props.setFinalLap((oldState) => {
-        return {
-          ...oldState,
-          startTime: oldState.startTime + (Date.now() - oldState.totalTime),
-        };
-      });
-    }
+    props.dispatch({ type: "START_TIMER" });
     props.updateInterval(true);
   }
 
   function stopStopwatch() {
-    props.setIsTiming(false);
+    props.dispatch({ type: "STOP_TIMER" });
     props.updateInterval(false);
   }
 
   return (
     <button
-      className={props.isTiming ? "stop" : "start"}
-      onClick={props.isTiming ? stopStopwatch : startStopwatch}
+      className={props.state.isTiming ? "stop" : "start"}
+      onClick={props.state.isTiming ? stopStopwatch : startStopwatch}
     >
-      {props.isTiming ? "Stop" : "Start"}
+      {props.state.isTiming ? "Stop" : "Start"}
     </button>
   );
 }

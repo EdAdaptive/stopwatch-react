@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { formatTime } from "./utils/formatTime";
+import * as Reducer from "./utils/mainReducer";
 import "./theme/App.css";
 
 import LeftButton from "./components/LeftButton/LeftButton";
@@ -7,9 +8,10 @@ import RightButton from "./components/RightButton/RightButton";
 import LapContainer from "./components/LapContainer/LapContainer";
 
 function App() {
-  const [startTime, setStartTime] = useState(0);
-  const [isTiming, setIsTiming] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [state, dispatch] = useReducer(
+    Reducer.stopwatchReducer,
+    Reducer.initialState
+  );
   const [lapHistory, setLapHistory] = useState([]);
   const [finalLap, setFinalLap] = useState({
     totalTime: 0,
@@ -18,14 +20,6 @@ function App() {
   const [timeInterval, setTimeInterval] = useState();
   const [worstLap, setWorstLap] = useState({ time: 0, key: 0 });
   const [bestLap, setBestLap] = useState({ time: 0, key: 0 });
-
-  useEffect(() => {
-    if (finalLap.startTime === 0 && isTiming) {
-      setFinalLap((prevState) => {
-        return { ...prevState, startTime: Date.now() };
-      });
-    }
-  }, [isTiming]);
 
   useEffect(() => {
     if (lapHistory.length === 1) {
@@ -85,16 +79,11 @@ function App() {
     }
   }, [lapHistory]);
 
-  function runStopwatch() {
-    setCurrentTime(Date.now());
-    setFinalLap((prevState) => {
-      return { ...prevState, totalTime: Date.now() };
-    });
-  }
-
   function updateInterval(state) {
     if (state) {
-      setTimeInterval(setInterval(() => runStopwatch(), 1000 / 60));
+      setTimeInterval(
+        setInterval(() => dispatch({ type: "UPDATE_TIMER" }), 1000 / 60)
+      );
     } else {
       clearInterval(timeInterval);
     }
@@ -104,39 +93,33 @@ function App() {
     <div className="stopwatch-container">
       <header className="stopwatch-header">
         <h2>
-          {currentTime === 0 ? "00:00:00" : formatTime(currentTime, startTime)}
+          {state.currentTime === 0
+            ? "00:00:00"
+            : formatTime(state.currentTime, state.startTime)}
         </h2>
       </header>
       <div>
         <section className="controls">
           <LeftButton
-            isTiming={isTiming}
-            startTime={startTime}
             lapHistory={lapHistory}
             finalLap={finalLap}
             worstLap={worstLap}
             bestLap={bestLap}
-            setStartTime={setStartTime}
-            setCurrentTime={setCurrentTime}
             setLapHistory={setLapHistory}
             setFinalLap={setFinalLap}
             setWorstLap={setWorstLap}
             setBestLap={setBestLap}
           />
           <RightButton
-            isTiming={isTiming}
-            startTime={startTime}
-            currentTime={currentTime}
-            setIsTiming={setIsTiming}
-            setStartTime={setStartTime}
+            state={state}
+            dispatch={dispatch}
             updateInterval={updateInterval}
-            setFinalLap={setFinalLap}
           />
         </section>
         <LapContainer
-          startTime={startTime}
+          startTime={state.startTime}
           lapHistory={[...lapHistory, finalLap]}
-          currentTime={currentTime}
+          currentTime={state.currentTime}
           worstLap={worstLap}
           bestLap={bestLap}
           setWorstLap={setWorstLap}
