@@ -4,11 +4,15 @@ const initialState = {
   startTime: 0,
   isTiming: false,
   currentTime: 0,
-  lapHistory: [],
-  finalLap: { totalTime: 0, startTime: 0 },
-  worstLap: { time: 0, key: 0 },
-  bestLap: { time: 0, key: 0 },
-  timeInterval: undefined,
+  lap: {
+    lapHistory: [],
+    finalLap: {
+      totalTime: 0,
+      startTime: 0,
+    },
+    worstLap: { time: 0, key: 0 },
+    bestLap: { time: 0, key: 0 },
+  },
 };
 
 const stopwatchReducer = (state, action) => {
@@ -19,17 +23,24 @@ const stopwatchReducer = (state, action) => {
           ...state,
           isTiming: true,
           startTime: Date.now(),
+          lap: {
+            ...state.lap,
+            finalLap: { ...state.lap.finalLap, startTime: Date.now() },
+          },
         };
       } else {
         return {
           ...state,
           isTiming: true,
           startTime: state.startTime + (Date.now() - state.currentTime),
-          finalLap: {
-            ...state.finalLap,
-            startTime:
-              state.finalLap.startTime +
-              (Date.now() - state.finalLap.totalTime),
+          lap: {
+            ...state.lap,
+            finalLap: {
+              ...state.lap.finalLap,
+              startTime:
+                state.lap.finalLap.startTime +
+                (Date.now() - state.lap.finalLap.totalTime),
+            },
           },
         };
       }
@@ -37,15 +48,112 @@ const stopwatchReducer = (state, action) => {
       clearInterval(state.timeInterval);
       return { ...state, isTiming: false };
     case "RESET_TIMER":
-      break;
+      return { ...initialState };
     case "UPDATE_TIMER":
       let mostRecentTime = Date.now();
       return {
         ...state,
+        lap: {
+          ...state.lap,
+          finalLap: { ...state.lap.finalLap, totalTime: state.currentTime },
+        },
         totalTime: mostRecentTime,
         currentTime: mostRecentTime,
       };
-      break;
+    case "LAP_TIMER":
+      if (state.lap.lapHistory.length === 1) {
+        if (
+          state.lap.lapHistory[0].totalTime -
+            state.lap.lapHistory[0].startTime <
+          state.lap.finalLap.totalTime - state.lap.finalLap.startTime
+        ) {
+          return {
+            ...state,
+            currentTime: state.currentTime,
+            lap: {
+              ...state.lap,
+              lapHistory: [...state.lap.lapHistory, state.lap.finalLap],
+              finalLap: { ...state.lap.finalLap, startTime: Date.now() },
+              bestLap: {
+                time:
+                  state.lap.lapHistory[0].totalTime -
+                  state.lap.lapHistory[0].startTime,
+                key: 1,
+              },
+              worstLap: {
+                time:
+                  state.lap.finalLap.totalTime - state.lap.finalLap.startTime,
+                key: 2,
+              },
+            },
+          };
+        } else {
+          return {
+            ...state,
+            lap: {
+              ...state.lap,
+              lapHistory: [...state.lap.lapHistory, state.lap.finalLap],
+              finalLap: { ...state.lap.finalLap, startTime: Date.now() },
+              bestLap: {
+                time:
+                  state.lap.finalLap.totalTime - state.lap.finalLap.startTime,
+                key: 2,
+              },
+              worstLap: {
+                time:
+                  state.lap.lapHistory[0].totalTime -
+                  state.lap.lapHistory[0].startTime,
+                key: 1,
+              },
+            },
+          };
+        }
+      } else if (state.lap.lapHistory.length > 1) {
+        if (
+          state.lap.finalLap.totalTime - state.lap.finalLap.startTime >
+          state.lap.worstLap.time
+        ) {
+          return {
+            ...state,
+            lap: {
+              ...state.lap,
+              lapHistory: [...state.lap.lapHistory, state.lap.finalLap],
+              finalLap: { ...state.lap.finalLap, startTime: Date.now() },
+              worstLap: {
+                time:
+                  state.lap.finalLap.totalTime - state.lap.finalLap.startTime,
+                key: state.lap.lapHistory.length + 1,
+              },
+            },
+          };
+        } else if (
+          state.lap.finalLap.totalTime - state.lap.finalLap.startTime <
+          state.lap.bestLap.time
+        ) {
+          return {
+            ...state,
+            lap: {
+              ...state.lap,
+              lapHistory: [...state.lap.lapHistory, state.lap.finalLap],
+              finalLap: { ...state.lap.finalLap, startTime: Date.now() },
+              bestLap: {
+                time:
+                  state.lap.finalLap.totalTime - state.lap.finalLap.startTime,
+                key: state.lap.lapHistory.length + 1,
+              },
+            },
+          };
+        }
+      }
+
+      return {
+        ...state,
+        lap: {
+          ...state.lap,
+          lapHistory: [...state.lap.lapHistory, state.lap.finalLap],
+          finalLap: { ...state.lap.finalLap, startTime: Date.now() },
+        },
+      };
     default:
       break;
   }
